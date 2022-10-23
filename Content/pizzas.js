@@ -15,6 +15,7 @@ window.Pizzas = {
     src: "/images/characters/pizzas/s001.png",
     icon: "/images/icons/spicy.png",
     actions: ["saucyStatus", "clumsyStatus", "damage1"],
+    flag: "PIZZA_CALABREZA",
   },
   s002: {
     name: "Peperoni Sueco",
@@ -23,6 +24,7 @@ window.Pizzas = {
     src: "/images/characters/pizzas/s002.png",
     icon: "/images/icons/spicy.png",
     actions: ["damage1", "saucyStatus", "clumsyStatus"],
+    // flag: "PIZZA_PEPERONI",
   },
   v001: {
     name: "Brócolis",
@@ -31,6 +33,7 @@ window.Pizzas = {
     src: "/images/characters/pizzas/v001.png",
     icon: "/images/icons/veggie.png",
     actions: ["damage1"],
+    // flag: "PIZZA_BROCOLIS",
   },
   f001: {
     name: "Champignon da casa",
@@ -39,5 +42,6 @@ window.Pizzas = {
     src: "/images/characters/pizzas/f001.png",
     icon: "/images/icons/fungi.png",
     actions: ["damage1"],
+    // flag: "PIZZA_CHAMPIGNON",
   },
 };

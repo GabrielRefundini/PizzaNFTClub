@@ -51,6 +51,7 @@ class PlayerState {
     };
     if (this.lineup.length < 3) {
       this.lineup.push(newId);
+      playerState.storyFlags[pizzaId] = true;
       console.log(this.lineup);
     }
     utils.emitEvent("LineupChanged");

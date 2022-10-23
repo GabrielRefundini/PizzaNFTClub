@@ -16,7 +16,12 @@ class PizzaStone extends GameObject {
     this.talking = [
       {
         required: [this.storyFlag],
-        events: [{ type: "textMessage", text: "ja era." }],
+        events: [
+          {
+            type: "textMessage",
+            text: "Voce precisa pegar mais massa primeiro.",
+          },
+        ],
       },
       {
         events: [

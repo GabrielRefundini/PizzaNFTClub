@@ -201,7 +201,7 @@ window.OverworldMaps = {
         x: utils.withGrid(5),
         y: utils.withGrid(7),
         storyFlag: "USED_PIZZA_STONE",
-        pizzas: ["v001", "f001"],
+        pizzas: ["s001", "s002", "v001", "f001"],
       }),
     },
     cutsceneSpaces: {
@@ -235,20 +235,27 @@ window.OverworldMaps = {
       }),
       npcA: new Person({
         x: utils.withGrid(7),
-        y: utils.withGrid(9),
+        y: utils.withGrid(10),
         src: "/images/characters/people/npc1.png",
-        behaviorLoop: [
-          { type: "stand", direction: "left", time: 800 },
-          { type: "stand", direction: "up", time: 800 },
-          { type: "stand", direction: "right", time: 1200 },
-          { type: "stand", direction: "up", time: 300 },
-        ],
+        behaviorLoop: [{ type: "stand", direction: "right" }],
         talking: [
           {
+            required: ["v001"],
             events: [
-              { type: "textMessage", text: "ERIO...", faceHero: "npcA" },
-              { type: "textMessage", text: "Go away!" },
-              { who: "hero", type: "walk", direction: "up" },
+              {
+                type: "textMessage",
+                text: "Obrigado, tome o pagamento",
+                faceHero: "npcA",
+              },
+            ],
+          },
+          {
+            events: [
+              {
+                type: "textMessage",
+                text: "Gostaria de uma Pizza de Brócolis",
+                faceHero: "npcA",
+              },
             ],
           },
           {
