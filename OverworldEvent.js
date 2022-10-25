@@ -2,6 +2,17 @@ class OverworldEvent {
   constructor({ map, event }) {
     this.map = map;
     this.event = event;
+
+    if(event.type !== 'stand'){
+
+      console.log('event created', event)
+    }
+  }
+
+  init() {
+    return new Promise((resolve) => {
+      this[this.event.type](resolve);
+    });
   }
 
   stand(resolve) {
@@ -59,7 +70,7 @@ class OverworldEvent {
     }
 
     const message = new TextMessage({
-      text: this.event.text,
+      text: `${this.event.faceHero || 'System'}: ${this.event.text}`,
       onComplete: () => resolve(),
     });
     message.init(document.querySelector(".game-container"));
@@ -74,8 +85,9 @@ class OverworldEvent {
       sceneTransition.fadeOut();
     });
   }
-  addStoryFlag(resolve) {
-    window.playerState.storyFlags[this.event.flag] = true;
+  setStoryFlag(resolve) {
+
+    window.playerState.storyFlags[this.event.flag] = this.event.value;
     resolve();
   }
   craftingMenu(resolve) {
@@ -86,11 +98,5 @@ class OverworldEvent {
       },
     });
     menu.init(document.querySelector(".game-container"));
-  }
-
-  init() {
-    return new Promise((resolve) => {
-      this[this.event.type](resolve);
-    });
   }
 }

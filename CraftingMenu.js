@@ -5,17 +5,26 @@ class CraftingMenu {
   }
 
   getOptions() {
-    return this.pizzas.map((id) => {
-      const base = Pizzas[id];
-      return {
-        label: base.name,
-        description: base.description,
+
+    const opts = [];
+
+    for(let type in this.pizzas){
+
+      const pizza = this.pizzas[type];
+
+      opts.push({
+
+        label: pizza.name,
+        description: pizza.description,
         handler: () => {
-          playerState.addPizza(id);
+
+          playerState.addPizza(type);
           this.close();
         },
-      };
-    });
+      });
+    }
+
+    return opts;
   }
 
   createElement() {

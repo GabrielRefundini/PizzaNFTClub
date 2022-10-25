@@ -49,8 +49,17 @@ class OverworldMap {
     this.isCutscenePlaying = true;
 
     for (let i = 0; i < events.length; i++) {
+
+      let event = events[i];
+
+      //Adicionado a possibilidade de um evento ser mapeado através de uma função
+      if(typeof event === 'function'){
+
+        event = event();
+      }
+
       const eventHandler = new OverworldEvent({
-        event: events[i],
+        event,
         map: this,
       });
       await eventHandler.init();
@@ -72,12 +81,17 @@ class OverworldMap {
     });
     if (!this.isCutscenePlaying && match && match.talking.length) {
       const relevantScenario = match.talking.find((scenario) => {
+
+        //Adição para permitir o uso de função no required, no talking geral do objeto, caso retorne true, cria os eventos subsequentes do mapeamento.
+        if(typeof scenario.required === 'function') return scenario.required();
+
         return (scenario.required || []).every((sf) => {
           return playerState.storyFlags[sf];
         });
       });
 
-      relevantScenario && this.startCutscene(relevantScenario.events);
+      //Adição de suporte de criação de eventos via retorno de função
+      relevantScenario && this.startCutscene(typeof relevantScenario.events === 'function' ? relevantScenario.events() : relevantScenario.events);
     }
   }
 
@@ -186,22 +200,46 @@ window.OverworldMaps = {
         src: "/images/characters/people/npc4.png",
         talking: [
           {
-            // required: ["pizza_Dough_Elia"],
+            //Adicionei a possibilidade de um required ser executado como função, para permitir negações
+            required: () => playerState.storyFlags['USED_PIZZA_STONE'] === false,
             events: [
+
+              {
+                //Todo evento vai mapear para OverworldEvent.XXX, nesse caso OverworldEvent.textMessage()
+                type: "textMessage",
+                text: "Ops, você já tem uma massa, utilize-a primeiro e depois volte aqui.",
+                faceHero: "npcB"
+              },
+              {
+                type: "walk",
+                who: "hero",
+                direction: "left"
+              }
+            ]
+          },
+          {
+            events:  [
+
               {
                 type: "textMessage",
                 text: "Ei! Parece que voce precisa de mais massa de pizza, tome.",
-                faceHero: "npcB",
+                faceHero: "npcB"
               },
-            ],
-          },
+              //Criei um setStoryFlag, permitindo passar um value
+              {
+                type: "setStoryFlag",
+                flag: 'USED_PIZZA_STONE',
+                value: false
+              },
+            ]
+          }
         ],
       }),
       pizzaStone: new PizzaStone({
         x: utils.withGrid(5),
         y: utils.withGrid(7),
         storyFlag: "USED_PIZZA_STONE",
-        pizzas: ["s001", "s002", "v001", "f001"],
+        pizzas: Pizzas,
       }),
     },
     cutsceneSpaces: {
@@ -239,31 +277,70 @@ window.OverworldMaps = {
         src: "/images/characters/people/npc1.png",
         behaviorLoop: [{ type: "stand", direction: "right" }],
         talking: [
+
           {
-            required: ["v001"],
-            events: [
-              {
-                type: "textMessage",
-                text: "Obrigado, tome o pagamento",
-                faceHero: "npcA",
-              },
-            ],
-          },
-          {
-            events: [
-              {
-                type: "textMessage",
-                text: "Gostaria de uma Pizza de Brócolis",
-                faceHero: "npcA",
-              },
-            ],
-          },
-          {
-            events: [
-              { type: "textMessage", text: "I'm busy...", faceHero: "npcA" },
-              { type: "textMessage", text: "Go away!" },
-              { who: "hero", type: "walk", direction: "up" },
-            ],
+            events(){
+
+              const events = [];
+
+              const npc = OverworldMaps.DinningRoom.gameObjects.npcA;
+              let pizza;
+
+              if(npc.currentRequestedPizza){
+
+                pizza = npc.currentRequestedPizza;
+
+                events.push({
+
+                  type: "textMessage",
+                  text: `O meu pedido da pizza de ${pizza.name} já ficou pronto?`,
+                  faceHero: "npcA",
+                });
+
+              } else {
+
+                const keys = Object.keys(PizzaTypes);
+                const pizzaType = keys[utils.getRandomIntBetween(0, keys.length - 1)];
+                npc.currentRequestedPizza = pizza = Pizzas[pizzaType];
+
+                events.push({
+
+                  type: "textMessage",
+                  text: `Eu gostaria de uma pizza de ${pizza.name}.`,
+                  faceHero: "npcA",
+                });
+              }
+
+              if(playerState.hasPizzaOfType(pizza.type)){
+
+                playerState.removePizzaByType(pizza.type);
+
+                events.push({
+
+                  type: "textMessage",
+                  text: "Um dos melhores sabores da casa, tome aqui.",
+                  faceHero: "hero",
+                });
+
+              } else {
+
+                events.push({
+
+                  type: "textMessage",
+                  text: `Bom pedido! Vou preparar a sua pizza de ${pizza.name} agora mesmo.`,
+                  faceHero: "hero",
+                });
+
+                events.push({
+
+                  type: "walk",
+                  who: "hero",
+                  direction: "up"
+                });
+              }
+
+              return events;
+            }
           },
         ],
       }),

@@ -12,6 +12,8 @@ class Person extends GameObject {
       "left": ["x", -1],
       "right": ["x", 1],
     }
+
+    this.currentRequestedPizza = null;
   }
 
   update(state) {

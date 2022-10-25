@@ -24,6 +24,11 @@ class Combatant {
     return this.level * 20;
   }
 
+  removeElement(){
+
+    this.hudElement.parentNode.removeChild(this.hudElement);
+  }
+
   createElement() {
     this.hudElement = document.createElement("div");
     this.hudElement.classList.add("Combatant");
