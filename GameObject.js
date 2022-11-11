@@ -7,7 +7,9 @@ class GameObject {
     this.direction = config.direction || "down";
     this.sprite = new Sprite({
       gameObject: this,
-      src: config.src || "/images/characters/people/hero.png",
+      src:
+        config.src ||
+        "https://gateway.pinata.cloud/ipfs/QmTvqhW8S959fzHnoWaURkwj7VXMAeUgyYgKPfYiXk5me9",
     });
 
     this.behaviorLoop = config.behaviorLoop || [];
@@ -17,7 +19,7 @@ class GameObject {
   }
 
   mount(map) {
-    console.log("mounting!");
+    // console.log("mounting!");
     this.isMounted = true;
     map.addWall(this.x, this.y);
 
